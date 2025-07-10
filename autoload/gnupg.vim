@@ -306,7 +306,7 @@ function gnupg#decrypt(bufread)
 
   " find the recipients of the file
   let cmd = { 'level': 3 }
-  let cmd.args = '--verbose --decrypt --list-only --dry-run --no-use-agent --logger-fd 1 ' . s:shellescape(filename, { 'cygpath': 1 })
+  let cmd.args = '--verbose --decrypt --dry-run --no-use-agent --logger-fd 3 ' . s:shellescape(filename, { 'cygpath': 1 }) . ' 3>&1 >/dev/null'
   let output = s:GPGSystem(cmd)
 
   " Suppress the "N more lines" message when editing a file, not when reading
@@ -393,6 +393,12 @@ function gnupg#decrypt(bufread)
     if readfile(filename, '', 1)[0] =~# '^-\{5}BEGIN PGP\%( SIGNED\)\= MESSAGE-\{5}$'
       call s:GPGDebug(1, "this file is armored")
       let b:GPGOptions += ["armor"]
+    endif
+
+    "" check if the file is signed
+    if (match(output, 'gpg: Signature made ') >= 0)
+      call s:GPGDebug(1, 'this file is signed')
+      let b:GPGOptions += ['sign']
     endif
 
     " finally decrypt the buffer content
