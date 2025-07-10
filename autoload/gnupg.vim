@@ -333,7 +333,8 @@ function gnupg#decrypt(bufread)
       echo
       echohl None
     endif
-  elseif (match(output, asymmPattern) >= 0)
+  endif
+  if (match(output, asymmPattern) >= 0)
     " file is asymmetric encrypted
     let b:GPGEncrypted = 1
     call s:GPGDebug(1, "this file is asymmetric encrypted")
@@ -368,7 +369,8 @@ function gnupg#decrypt(bufread)
       end
       let start = match(output, asymmPattern, start)
     endwhile
-  else
+  endif
+  if (!exists("b:GPGEncrypted") || b:GPGEncrypted == 0)
     " file is not encrypted
     let b:GPGEncrypted = 0
     call s:GPGDebug(1, "this file is not encrypted")
