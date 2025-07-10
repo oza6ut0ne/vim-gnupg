@@ -507,19 +507,29 @@ function gnupg#encrypt()
     let b:GPGOptions = []
     if (exists("g:GPGPreferSymmetric") && g:GPGPreferSymmetric == 1)
       let b:GPGOptions += ["symmetric"]
-      let b:GPGRecipients = []
+      if (exists('g:GPGDefaultOptions') && index(g:GPGDefaultOptions, 'encrypt') < 0)
+        let b:GPGRecipients = []
+      endif
     else
       let b:GPGOptions += ["encrypt"]
     endif
+
     " Fallback to preference by filename if the user didn't indicate
     " their preference.
     let preferArmor = get(g:, 'GPGPreferArmor', -1)
     if (preferArmor >= 0 && preferArmor) || filename =~ '\.asc$'
       let b:GPGOptions += ["armor"]
     endif
+
     if (exists("g:GPGPreferSign") && g:GPGPreferSign == 1)
       let b:GPGOptions += ["sign"]
     endif
+
+    " add user defined options
+    if (exists('g:GPGDefaultOptions'))
+      call extend(b:GPGOptions, filter(copy(g:GPGDefaultOptions), 'index(b:GPGOptions, v:val) < 0'))
+    endif
+
     call s:GPGDebug(1, "no options set, so using default options: " . string(b:GPGOptions))
   endif
 

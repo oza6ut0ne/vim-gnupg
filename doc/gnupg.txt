@@ -73,6 +73,12 @@ g:GPGPreferArmor        If set to 1 armored data is preferred for new files.
 g:GPGPreferSign         If set to 1 signed data is preferred for new files.
                         Defaults to 0.
 
+                                                *gnupg-g:GPGDefaultOptions*
+g:GPGDefaultOptions     If set, these options are used as defaults for new
+                        files in addition to g:GPGPrefer* variables when no
+                        other option is defined. This variable is a Vim
+                        list. Default is unset.
+
                                                 *gnupg-g:GPGDefaultRecipients*
 g:GPGDefaultRecipients  If set, these recipients are used as defaults when no
                         other recipient is defined. This variable is a Vim
